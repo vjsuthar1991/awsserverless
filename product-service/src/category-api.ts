@@ -1,16 +1,33 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
+import { CategoryService } from './service/category-service';
+import { CategoryRepository } from './repository/category-repository';
+import './utility';
+import jsonBodyParser from "@middy/http-json-body-parser";
+import middy from "@middy/core";
 
-export const handler = async (
+const service = new CategoryService(new CategoryRepository());
+
+export const handler = middy((
     event: APIGatewayEvent,
     context: Context
 ): Promise<APIGatewayProxyResult> => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
-    console.log(`Context: ${JSON.stringify(context)}`);
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            messsage: "Hello from category service",
-            path: `${event.path}, ${event.pathParameters}`,
-        })
-    };
-};
+    const isRoot = event.pathParameters === null;
+    switch (event.httpMethod.toLowerCase()) {
+        case "post":
+            if (isRoot) {
+                return service.createCategory(event);
+            }
+            break;
+        case "get":
+            return isRoot ? service.getCategories(event) : service.getCategory(event);
+        case "put":
+            if (!isRoot) {
+                return service.editCategory(event);
+            }
+        case "delete":
+            if (!isRoot) {
+                return service.deleteCategory(event);
+            }
+    }
+    return service.ResponseWithError(event);
+}).use(jsonBodyParser());

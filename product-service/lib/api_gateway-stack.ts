@@ -1,5 +1,5 @@
 import { aws_apigateway } from "aws-cdk-lib";
-import { LambdaIntegration, LambdaRestApi, Method, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
@@ -7,6 +7,7 @@ interface ApiGatewayStackProps {
     productService: IFunction;
     categoryService: IFunction;
     dealsService: IFunction;
+    imageService: IFunction;
 }
 
 interface ResourceType {
@@ -22,7 +23,7 @@ export class ApiGatewayStack extends Construct {
     }
 
     addResource(serviceName: string,
-        { categoryService, productService, dealsService }: ApiGatewayStackProps
+        { categoryService, productService, dealsService, imageService }: ApiGatewayStackProps
     ) {
         const apgw = new aws_apigateway.RestApi(this, `${serviceName}-APiGtw`);
         
@@ -51,6 +52,11 @@ export class ApiGatewayStack extends Construct {
                 name: "{id}",
                 methods: ["GET", "PUT", "DELETE"]
             }
+        });
+
+        this.createEndpoints(imageService, apgw, {
+            name: "uploader",
+            methods: ["GET"]
         });
     }
 
