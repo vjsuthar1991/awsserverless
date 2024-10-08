@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/pg": "^8.11.8",
     "serverless-offline": "^13.8.0",
     "serverless-plugin-typescript": "^2.1.5"
   },
@@ -19,11 +22,16 @@
     "@middy/http-json-body-parser": "4.0.9",
     "@types/aws-lambda": "^8.10.145",
     "aws-lambda": "^1.0.7",
+    "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "db-migrate-pg": "^1.5.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
     "tsyringe": "^4.8.0",
+    "twilio": "^5.3.0",
     "typescript": "^5.5.4"
   }
 }

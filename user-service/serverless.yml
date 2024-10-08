@@ -25,8 +25,11 @@ functions:
           path: /login
           method: post
   verify:
-    handler: app/handler.verify
+    handler: app/handler.Verify
     events:
+      - httpApi:
+          path: /verify
+          method: get
       - httpApi:
           path: /verify
           method: post
@@ -69,3 +72,5 @@ functions:
 plugins:
   - serverless-offline
   - serverless-plugin-typescript
+package:
+  individually: true
