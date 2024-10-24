@@ -2,6 +2,7 @@
 org: vjsuthar
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: user-service
+useDotenv: true
 
 provider:
   name: aws
@@ -10,10 +11,28 @@ provider:
   region: us-east-1
   httpApi:
     cors: true
+  environment:
+    SNS_TOPIC: !Ref CustomerTopic
+    STRIPE_PUBLISHABLE_KEY: ${env:STRIPE_PUBLISHABLE_KEY}
+    STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY}
+    NOTIFY_TOPIC: "Fn::ImportValue": "notifySvcArn"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sns:Publish"
+      Resource:
+        - !Ref CustomerTopic
+        - "Fn::ImportValue": "notifySvcArn"
+
+custom:
+  stage: "dev"
+  serverless-offline:
+    httpPort: 4000
+    lambdaPort: 4002
 
 functions:
   signup:
-    handler: app/handler.Signup
+    handler: app/handler.SignUp
     events:
       - httpApi:
           path: /signup
@@ -29,48 +48,115 @@ functions:
     events:
       - httpApi:
           path: /verify
-          method: get
+          method: post
+  get-verification-code:
+    handler: app/handler.GetVerificationCode
+    events:
       - httpApi:
           path: /verify
-          method: post
-  profile:
-    handler: app/handler.Profile
+          method: get
+  create-profile:
+    handler: app/handler.CreateProfile
     events:
       - httpApi:
           path: /user
           method: post
+  edit-profile:
+    handler: app/handler.EditProfile
+    events:
       - httpApi:
           path: /user
           method: put
+  get-profile:
+    handler: app/handler.GetProfile
+    events:
       - httpApi:
           path: /user
           method: get
-  cart:
-    handler: app/handler.Cart
+  # Cart Section
+  create-cart:
+    handler: app/handler.CreateCart
+    timeout: 20
     events:
       - httpApi:
           path: /cart
           method: post
-      - httpApi:
-          path: /cart
-          method: put
-      - httpApi:
-          path: /cart
-          method: get
-  payment:
-    handler: app/handler.Payment
+  edit-cart:
+    handler: app/handler.EditCart
+    timeout: 20
     events:
       - httpApi:
-          path: /payment
-          method: post
-      - httpApi:
-          path: /payment
+          path: /cart/{id}
           method: put
+  get-cart:
+    handler: app/handler.GetCart
+    timeout: 20
+    events:
       - httpApi:
-          path: /payment
+          path: /cart
           method: get
+  delete-cart:
+    handler: app/handler.DeleteCart
+    timeout: 20
+    events:
+      - httpApi:
+          path: /cart/{id}
+          method: delete
+  collect-payment:
+    handler: app/handler.CollectPayment
+    timeout: 20
+    events:
+      - httpApi:
+          path: /collect-payment
+          method: post
+
+  place-order:
+    handler: app/handler.PlaceOrder
+    timeout: 20
+    events:
+      - httpApi:
+          path: /order
+          method: post
+  joinSellerProgram:
+    handler: app/handler.JoinSellerProgram
+    timeout: 20
+    events:
+      - httpApi:
+          path: /join
+          method: post
+  getPaymentMethod:
+    handler: app/handler.GetPaymentMethods
+    timeout: 20
+    events:
+      - httpApi:
+          path: /payment-methods
+          method: get
+  editPaymentMethod:
+    handler: app/handler.EditPaymentMethods
+    timeout: 20
+    events:
+      - httpApi:
+          path: /payment-methods/{id}
+          method: put          
 plugins:
   - serverless-offline
   - serverless-plugin-typescript
+
 package:
   individually: true
+
+resources:
+  Resources:
+    CustomerTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: "customer sns topic description"
+        TopicName: CustomerTopic
+
+  # output for later usages
+  Outputs:
+    CustomerTopicInfo:
+      Description: customer-topic
+      Value: !Ref CustomerTopic
+      Export:
+        Name: customer-topic
