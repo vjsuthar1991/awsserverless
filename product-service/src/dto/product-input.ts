@@ -3,10 +3,10 @@ import { IsNumber, Length } from "class-validator";
 export class ProductInput {
     id: string;
 
-    @Length(3,128)
+    @Length(3, 128)
     name: string;
 
-    @Length(3,256)
+    @Length(3, 256)
     description: string;
 
     category_id: string;
@@ -17,4 +17,6 @@ export class ProductInput {
     price: number;
 
     availability: boolean;
+
+    seller_id: number;
 }

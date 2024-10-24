@@ -1,5 +1,5 @@
 import { UserModel } from '../models/UserModel';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 const APP_SECRET = "our_app_secret";
 
@@ -19,13 +19,13 @@ export const ValidatePassword = async (
     return (await GetHashedPassword(enteredPassword, salt)) == savedPassword;
 };
 
-export const GetToken = ({user_id, email, phone, userType}: UserModel) => {
+export const GetToken = ({ user_id, email, phone, user_type }: UserModel) => {
     return jwt.sign(
         {
             user_id,
             email,
             phone,
-            userType
+            user_type
         },
         APP_SECRET,
         {
@@ -38,7 +38,7 @@ export const VerifyToken = async (
     token: string
 ): Promise<UserModel | false> => {
     try {
-        if(token !== ""){
+        if (token !== "") {
             const payload = await jwt.verify(token.split(" ")[1], APP_SECRET);
             return payload as UserModel;
         }

@@ -7,10 +7,10 @@ export class UserRepository extends DBOperation {
     constructor() {
         super();
     }
-    async createAccount({ phone, email, password, salt, userType }: UserModel) {
+    async createAccount({ phone, email, password, salt, user_type }: UserModel) {
         const queryString =
             "INSERT INTO users(phone,email,password,salt,user_type) VALUES($1,$2,$3,$4,$5) RETURNING *";
-        const values = [phone, email, password, salt, userType];
+        const values = [phone, email, password, salt, user_type];
         const result = await this.executeQuery(queryString, values);
 
         if (result.rowCount > 0) {
@@ -21,7 +21,7 @@ export class UserRepository extends DBOperation {
     async findAccount(email: string) {
 
         const queryString =
-            "SELECT user_id, email, password, phone, salt, verification_code, expiry from users where email = $1";
+            "SELECT user_id, email, password, phone, salt, verification_code, expiry, user_type from users where email = $1";
         const values = [email];
         const result = await this.executeQuery(queryString, values);
         if (result.rowCount < 1) {
@@ -102,20 +102,20 @@ export class UserRepository extends DBOperation {
 
     async getUserProfie(user_id: number) {
         const profileQuery =
-            "SELECT first_name, last_name, email, phone, user_type, verified from users where user_id = $1";
+            "SELECT first_name, last_name, email, phone, user_type, verified, stripe_id, payment_id from users where user_id = $1";
         const profileValues = [user_id];
         const profileResult = await this.executeQuery(profileQuery, profileValues);
         if (profileResult.rowCount < 1) {
             throw new Error("user profile doesn't exist!");
         }
-        
+
         const userProfile = profileResult.rows[0] as UserModel;
-        
+
         const addressQuery = "SELECT id, address_line1, address_line2, city, post_code, country FROM address where user_id = $1"
         const addressValues = [user_id];
         const addressResult = await this.executeQuery(addressQuery, addressValues);
-        
-        if(addressResult.rowCount > 0) {
+
+        if (addressResult.rowCount > 0) {
             userProfile.address = addressResult.rows as AddressModel[];
         }
         return userProfile;
@@ -146,7 +146,21 @@ export class UserRepository extends DBOperation {
         const addressValues = [addressLine1, addressLine2, city, postCode, country, id];
         const addressResult = await this.executeQuery(addressQuery, addressValues);
         if (addressResult.rowCount < 1) {
-            throw new Error("error while updating profile!");        
+            throw new Error("error while updating profile!");
         }
+    }
+
+    async updateUserPayment({ userId, paymentId, customerId }: {
+        userId: number, paymentId: string, customerId: string
+    }) {
+        const queryString =
+            "UPDATE users SET stripe_id=$1, payment_id=$2 WHERE user_id=$3 RETURNING *";
+        const values = [customerId, paymentId, userId];
+        const result = await this.executeQuery(queryString, values);
+
+        if (result.rowCount > 0) {
+            return result.rows[0] as UserModel;
+        }
+        throw new Error("error while updating user!");
     }
 }

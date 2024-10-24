@@ -41,11 +41,19 @@ export class UserService {
                 email: input.email,
                 password: hashedPassword,
                 phone: input.phone,
-                userType: "BUYER",
+                user_type: "BUYER",
                 salt: salt,
             });
-
-            return SucessResponse(data);
+            const token = GetToken(data);
+            return SucessResponse({
+                token,
+                email: data.email,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                phone: data.phone,
+                userType: data.user_type,
+                _id: data.user_id
+            });
         } catch (error) {
             console.log(error);
             return ErrorResponse(500, error);
@@ -68,7 +76,15 @@ export class UserService {
             }
             const token = GetToken(data);
 
-            return SucessResponse({ token });
+            return SucessResponse({
+                token,
+                email: data.email,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                phone: data.phone,
+                userType: data.user_type,
+                _id: data.user_id
+            });
         } catch (error) {
             console.log(error);
             return ErrorResponse(500, error);
@@ -170,19 +186,6 @@ export class UserService {
             console.log(error);
             return ErrorResponse(500, error);
         }
-    }
-
-    // Cart Section
-    async CreateCart(event: APIGatewayProxyEventV2) {
-        return SucessResponse({ message: "response from Create Cart" });
-    }
-
-    async GetCart(event: APIGatewayProxyEventV2) {
-        return SucessResponse({ message: "response from Get Cart" });
-    }
-
-    async UpdateCart(event: APIGatewayProxyEventV2) {
-        return SucessResponse({ message: "response from Update Cart" });
     }
 
     // Payment Section

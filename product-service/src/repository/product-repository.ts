@@ -11,6 +11,7 @@ export class ProductRepository {
         price,
         category_id,
         image_url,
+        seller_id
     }: ProductInput) {
         return products.create({
             name,
@@ -19,6 +20,7 @@ export class ProductRepository {
             category_id,
             image_url,
             availability: true,
+            seller_id
         });
     }
 
@@ -26,8 +28,12 @@ export class ProductRepository {
         return products.find().skip(offset).limit(pages ? pages : 100);
     }
 
+    async getAllSellerProducts(seller_id: number) {
+        return products.find({ seller_id: seller_id });
+    }
+
     async getProductById(id: string) {
-        return products.findById(id);
+        return (await products.findById(id)) as ProductDoc;
     }
 
     async updateProduct({
