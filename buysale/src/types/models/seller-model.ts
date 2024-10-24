@@ -1,4 +1,4 @@
-export interface UserModel {
+export interface SellerProductModel {
   token: string;
   _id: string;
   email: string;
@@ -7,10 +7,4 @@ export interface UserModel {
   phone: string;
   createdAt: string;
   userType: string;
-}
-
-export interface RegisterModel {
-  email: string;
-  phone: string;
-  password: string;
 }

@@ -6,6 +6,9 @@ import LoginPage from "./Login";
 import CartPage from "./Cart";
 import { PostOrder } from "./Cart/PostOrder";
 import { FailedOrder } from "./Cart/FailedOrder";
+import OrderPage from "./Order";
+import SellerProgramPage from "./SellerProgram";
+import { ProductDetails } from "./ProductDetail";
 
 interface RouteManagerProps {}
 
@@ -22,8 +25,11 @@ export const RouteManager: React.FC<RouteManagerProps> = ({}) => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/orders" element={<OrderPage />} />
         <Route path="/post-order" element={<PostOrder />} />
         <Route path="/failed-order" element={<FailedOrder />} />
+        <Route path="/seller-program" element={<SellerProgramPage />} />
+        <Route path="/product-details/:id" element={<ProductDetails />} />
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>

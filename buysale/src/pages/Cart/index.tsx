@@ -59,7 +59,6 @@ const CartPage: React.FC<CartProps> = ({}) => {
 
   const onGetCartItems = async () => {
     const { data, msg } = await FetchCartItemsApi(profile.token);
-    console.log(data, "data");
     if (data) {
       setAppFee(Number(data.appFee));
       const items = data.cartItems as CartModel[];

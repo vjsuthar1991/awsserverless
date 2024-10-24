@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { Toolbar, Typography, Button } from "@mui/material";
+import { Toolbar, Typography, Button, IconButton, Icon } from "@mui/material";
 import {
   LeftIcon,
   LogoSmall,
@@ -12,9 +12,10 @@ import NotificationIcon from "../images/notification.svg";
 import AvatarIcon from "../images/avatar.png";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import CartIcon from "@mui/icons-material/ShoppingCart";
 import React, { useEffect } from "react";
-import { AppCSS } from "./index";
-import { useNavigate } from "react-router-dom";
+import { AppCSS, TapButton } from "./index";
+import { Link, useNavigate } from "react-router-dom";
 import { RowDiv } from "./Misc/misc.styled";
 import DownIcon from "@mui/icons-material/ArrowDropDown";
 import { useDispatch } from "react-redux";
@@ -146,6 +147,14 @@ export const ProfileMenu: React.FC<ProfileProps> = ({}) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
+            handleClose();
+            navigate("/seller-program");
+          }}
+        >
+          Seller Program
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
             dispatch(userLogin({} as UserModel));
             handleClose();
           }}
@@ -230,7 +239,29 @@ export const NavBar = () => {
     } else {
       return (
         <RightNav>
-          <NavItem title="Login" linkTo="/login" />
+          <Link to={"/login"}>
+            <IconButton
+              style={{
+                borderRadius: 21,
+                height: 42,
+                background: AppCSS.ORANGE,
+                paddingLeft: 20,
+                paddingRight: 20,
+              }}
+            >
+              <CartIcon style={{ color: AppCSS.WHITE }} />
+              <p
+                style={{
+                  fontSize: 16,
+                  fontWeight: "300",
+                  marginLeft: 10,
+                  color: AppCSS.WHITE,
+                }}
+              >
+                My Cart
+              </p>
+            </IconButton>
+          </Link>
         </RightNav>
       );
     }

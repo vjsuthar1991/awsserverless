@@ -15,5 +15,5 @@ export interface ProductModel {
   category_id: string;
   image_url: string;
   price: number;
-  availability: true;
+  availability: boolean;
 }

@@ -38,7 +38,7 @@ const LoginPage: React.FC<LoginProps> = ({}) => {
     if (data) {
       const auth = data as UserModel;
       if (auth.token) {
-        localStorage.setItem("token", auth.token);
+        localStorage.setItem("userData", JSON.stringify(auth));
       }
       dispatch(userLogin(auth));
       navigate("/");
@@ -79,7 +79,11 @@ const LoginPage: React.FC<LoginProps> = ({}) => {
     return (
       <CenterBox
         style={{
-          maxWidth: "420px",
+          maxWidth: "360px",
+          background: "#fff",
+          padding: 50,
+          boxShadow: "1px 1px 5px 1px #DBDBDB",
+          borderRadius: 5,
         }}
       >
         <RowDiv>
